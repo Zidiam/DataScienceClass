@@ -1,0 +1,20 @@
+heart = read.csv("Heart.csv")
+View(heart)
+heart$HD = as.factor(heart$HD)
+plot(heart$RestBP, heart$Chol, col=heart$HD, pch=19, cex=0.8)
+plot(heart$Age, heart$MaxHR, col=heart$HD, pch=19, cex=0.8)
+boxplot(heart$RestBP ~ heart$HD)
+
+boxplot(heart$MaxHR ~ heart$HD)
+#install.packages("C50")
+library(C50)
+heart_train = heart[1:203,]
+heart_test = heart[204:303,]
+heart_tree = C5.0(heart_train[,-1], heart_train[,1])
+heart_test_pred = predict(heart_tree, heart_test)
+table(heart_test_pred, heart_test$HD)
+plot(heart_tree)
+error_cost = matrix(c(0,1,3,0), nrow=2)
+heart_tree = C5.0(heart_train[,-1], heart_train[,1,], costs = error_cost)
+heart_test_pred = predict(heart_tree, heart_test)
+table(heart_test_pred, heart_test$HD)
